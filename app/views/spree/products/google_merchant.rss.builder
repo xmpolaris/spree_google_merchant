@@ -14,11 +14,11 @@ xml.rss "version" => "2.0", "xmlns:g" => "http://base.google.com/ns/1.0" do
         xml.title product.name
         xml.description CGI.escapeHTML(product.description)
         xml.link production_domain + 'products/' + product.permalink
-        xml.tag! "g:mpn", product.sku.to_s
+        xml.tag! "g:mpn", product['v_sku'].to_s
         xml.tag! "g:id", product.id.to_s
-        xml.tag! "g:price", product.price.to_s
+        xml.tag! "g:price", product['v_price'].to_s
         xml.tag! "g:condition", "new"
-        xml.tag! "g:image_link", production_domain.sub(/\/$/, '') + product.images.first.attachment.url(:product) unless product.images.empty?
+        xml.tag! "g:image_link", production_domain.sub(/\/$/, '') + "/spree/products/#{product.id}/product/#{product['img_name']}" unless product['img_name'].blank?
       end
     end
   end
