@@ -23,7 +23,7 @@ Spree::ProductsController.class_eval do
       spree_variants.count_on_hand as v_count_on_hand,
       spree_products_taxons.taxon_id as v_taxon_id,
       spree_assets.attachment_file_name as img_name'
-    ).group('spree_products.id').active.limit(5)
+    ).group('spree_products.id').active
   end
 
   protected
