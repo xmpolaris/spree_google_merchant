@@ -1,6 +1,6 @@
 Spree::ProductsController.class_eval do
   def google_merchant
-    @taxons = Spree::Taxon.all.inject({}) {|a,b| a.merge({b.id.to_s => b.pretty_name})}
+    @taxons = Spree::Taxon.all.inject({}) {|a,b| a.merge({b.id.to_s => google_merchant_product_type(b)})}
     product_properties = Spree::ProductProperty.includes(:property)
     property_mpn = Spree::Property.where(:name => 'mpn').first.try(&:id)
     property_brand = Spree::Property.where(:name => 'brand').first.try(&:id)
