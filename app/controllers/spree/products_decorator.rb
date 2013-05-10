@@ -1,6 +1,13 @@
 Spree::ProductsController.class_eval do
   def google_merchant
     @taxons = Spree::Taxon.all.inject({}) {|a,b| a.merge({b.id.to_s => b.pretty_name})}
+    product_properties = Spree::ProductProperty.includes(:property)
+    property_mpn = Spree::Property.where(:name => 'mpn').first.try(&:id)
+    property_brand = Spree::Property.where(:name => 'brand').first.try(&:id)
+    property_manufacturer = Spree::Property.where(:name => 'manufacturer').first.try(&:id)
+
+    @product_brands = product_properties.where("spree_proterties.name = 'brand'")
+    @product_manufacturers = product_properties.where("spree_proterties.name = 'manufacturer'")
     @products = Spree::Product.joins(
       "LEFT JOIN `spree_variants` ON
         `spree_variants`.`product_id` = `spree_products`.`id` AND 
@@ -24,6 +31,28 @@ Spree::ProductsController.class_eval do
       spree_products_taxons.taxon_id as v_taxon_id,
       spree_assets.attachment_file_name as img_name'
     ).group('spree_products.id').active
+
+    if property_mpn
+      @products = @products.joins(
+        "LEFT JOIN `spree_product_properties` as spree_mpns ON
+          `spree_mpns`.`product_id` = `spree_products`.`id` AND
+          `spree_mpns`.`property_id` = #{property_mpn}"
+      ).select("spree_mpns.value as v_mpn")
+    end
+    if property_brand
+      @products = @products.joins(
+        "LEFT JOIN `spree_product_properties` as spree_brands ON
+          `spree_brands`.`product_id` = `spree_products`.`id` AND
+          `spree_brands`.`property_id` = #{property_brand}"
+      ).select("spree_brands.value as v_brand")
+    end
+    if property_manufacturer
+      @products = @products.joins(
+        "LEFT JOIN `spree_product_properties` as spree_mus ON
+          `spree_mus`.`product_id` = `spree_products`.`id` AND
+          `spree_mus`.`property_id` = #{property_manufacturer}"
+      ).select("spree_mus.value as v_manufacturer")
+    end
   end
 
   protected
@@ -34,4 +63,5 @@ Spree::ProductsController.class_eval do
     ancestor_chain + "#{name}"
   end
 end
+
 
