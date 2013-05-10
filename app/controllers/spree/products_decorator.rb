@@ -56,11 +56,11 @@ Spree::ProductsController.class_eval do
   end
 
   protected
-  def google_merchant_product_type(product)
-    ancestor_chain = product.ancestors.inject("") do |name, ancestor|
+  def google_merchant_product_type(taxon)
+    ancestor_chain = taxon.ancestors.inject("") do |name, ancestor|
       name += "#{ancestor.name} > "
     end
-    ancestor_chain + "#{name}"
+    ancestor_chain + "#{taxon.name}"
   end
 end
 
